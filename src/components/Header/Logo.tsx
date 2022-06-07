@@ -7,7 +7,7 @@ export const Logo = () => {
       fontWeight="bold"
       letterSpacing="tight"
       w="64"
-      pl="20"
+      pl={["4", "20"]}
     >
       dashgo
       <Text as="span" ml="1" color="pink.500">
