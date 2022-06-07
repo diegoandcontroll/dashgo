@@ -11,7 +11,7 @@ import { NavSection } from "./NavSection";
 
 export const SidebarNav = () => {
   return (
-    <Stack spacing="12" align="flex-start" ml="20">
+    <Stack spacing="12" align="flex-start" ml={["0", "20"]}>
       <NavSection title="GERAL">
         <NavLink icon={RiDashboardLine} href="/dashboard">
           Dashboard
