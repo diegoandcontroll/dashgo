@@ -56,27 +56,41 @@ const options = {
 const series = [{ name: "series1", data: [31, 120, 12, 192, 14, 15, 16] }];
 const Dashboard = () => {
   return (
-    <Flex direction="column" h="100vh">
+    <Flex direction="column" h="100vh" overflow="hidden">
       <Header />
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <Sidebar />
         <SimpleGrid
           flex="1"
           gap="4"
-          minChildWidth="320px"
+          minChildWidth={["320px", "400"]}
           alignItems="flex-start"
         >
-          <Box p="8" bg="gray.800" borderRadius={8} pb="4">
+          <Box p={["6", "8"]} bg="gray.800" borderRadius={8} pb="4">
             <Text fontSize="lg" mb="4" ml="8">
               Inscritos da semana
             </Text>
-            <Chart options={options} series={series} type="area" height={160} />
+            <Box minWidth={320}>
+              <Chart
+                options={options}
+                series={series}
+                type="area"
+                height={160}
+              />
+            </Box>
           </Box>
-          <Box p="8" bg="gray.800" borderRadius={8} pb="4">
+          <Box p={["6", "8"]} bg="gray.800" borderRadius={8} pb="4">
             <Text fontSize="lg" mb="4" ml="8">
               Taxa de abertura
             </Text>
-            <Chart options={options} series={series} type="area" height={160} />
+            <Box minWidth={320}>
+              <Chart
+                options={options}
+                series={series}
+                type="area"
+                height={160}
+              />
+            </Box>
           </Box>
         </SimpleGrid>
       </Flex>
