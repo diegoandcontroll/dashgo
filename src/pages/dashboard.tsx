@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { Box, Flex, SimpleGrid, Text, theme } from "@chakra-ui/react";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
+import Head from "next/head";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -56,45 +57,50 @@ const options = {
 const series = [{ name: "series1", data: [31, 120, 12, 192, 14, 15, 16] }];
 const Dashboard = () => {
   return (
-    <Flex direction="column" h="100vh" overflow="hidden">
-      <Header />
-      <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-        <Sidebar />
-        <SimpleGrid
-          flex="1"
-          gap="4"
-          minChildWidth={["320px", "400"]}
-          alignItems="flex-start"
-        >
-          <Box p={["6", "8"]} bg="gray.800" borderRadius={8} pb="4">
-            <Text fontSize="lg" mb="4" ml="8">
-              Inscritos da semana
-            </Text>
-            <Box minWidth={320}>
-              <Chart
-                options={options}
-                series={series}
-                type="area"
-                height={160}
-              />
+    <>
+      <Head>
+        <title>Dashgo | dashboard</title>
+      </Head>
+      <Flex direction="column" h="100vh" overflow="hidden">
+        <Header />
+        <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+          <Sidebar />
+          <SimpleGrid
+            flex="1"
+            gap="4"
+            minChildWidth={["320px", "400"]}
+            alignItems="flex-start"
+          >
+            <Box p={["6", "8"]} bg="gray.800" borderRadius={8} pb="4">
+              <Text fontSize="lg" mb="4" ml="8">
+                Inscritos da semana
+              </Text>
+              <Box minWidth={320}>
+                <Chart
+                  options={options}
+                  series={series}
+                  type="area"
+                  height={160}
+                />
+              </Box>
             </Box>
-          </Box>
-          <Box p={["6", "8"]} bg="gray.800" borderRadius={8} pb="4">
-            <Text fontSize="lg" mb="4" ml="8">
-              Taxa de abertura
-            </Text>
-            <Box minWidth={320}>
-              <Chart
-                options={options}
-                series={series}
-                type="area"
-                height={160}
-              />
+            <Box p={["6", "8"]} bg="gray.800" borderRadius={8} pb="4">
+              <Text fontSize="lg" mb="4" ml="8">
+                Taxa de abertura
+              </Text>
+              <Box minWidth={320}>
+                <Chart
+                  options={options}
+                  series={series}
+                  type="area"
+                  height={160}
+                />
+              </Box>
             </Box>
-          </Box>
-        </SimpleGrid>
+          </SimpleGrid>
+        </Flex>
       </Flex>
-    </Flex>
+    </>
   );
 };
 
