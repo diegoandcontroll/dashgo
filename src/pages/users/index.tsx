@@ -24,6 +24,7 @@ import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
 import { useQuery } from "react-query";
 import { api } from "../../services/api";
+import { useState } from "react";
 type User = {
   id: string;
   name: string;
@@ -31,10 +32,13 @@ type User = {
   created_at: string;
 };
 const User = () => {
+  const [page, setPage] = useState(1);
+  console.log(page);
   const { data, isError, isLoading, isFetching } = useQuery(
     "users",
     async () => {
       const { data } = await api.get("users");
+
       const users = data.users.map((user: User) => {
         return {
           id: user.id,
@@ -145,7 +149,11 @@ const User = () => {
                     })}
                   </Tbody>
                 </Table>
-                <Pagination />
+                <Pagination
+                  totalCountOfRegisters={200}
+                  currentPage={page}
+                  onPageChange={setPage}
+                />
               </>
             )}
           </Box>
