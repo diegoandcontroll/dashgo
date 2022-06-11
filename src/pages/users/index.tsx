@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   Icon,
+  Link,
   Spinner,
   Table,
   Tbody,
@@ -16,15 +17,15 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import Link from "next/link";
-
+import NextLink from "next/link";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-import { useQuery } from "react-query";
-import { api } from "../../services/api";
 import { useState } from "react";
+import { useUsers } from "../../services/hooks/useUsers";
+import { client } from "../../services/queryClient";
+import { api } from "../../services/api";
 type User = {
   id: string;
   name: string;
@@ -33,35 +34,23 @@ type User = {
 };
 const User = () => {
   const [page, setPage] = useState(1);
-  console.log(page);
-  const { data, isError, isLoading, isFetching } = useQuery(
-    "users",
-    async () => {
-      const { data } = await api.get("users");
-
-      const users = data.users.map((user: User) => {
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          created_at: new Date().toLocaleDateString("pt-BR", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          }),
-        };
-      });
-      return users;
-    },
-    {
-      staleTime: 1000 * 5,
-    }
-  );
+  const { data, isError, isLoading, isFetching } = useUsers(page);
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   });
-
+  async function handlePrefetchUser(userId: string) {
+    await client.prefetchQuery(
+      ["users", userId],
+      async () => {
+        const response = await api.get(`users/${userId}`);
+        return response.data;
+      },
+      {
+        staleTime: 1000 * 60 * 10, // 10 minutes
+      }
+    );
+  }
   return (
     <>
       <Head>
@@ -80,7 +69,7 @@ const User = () => {
                 )}
               </Heading>
 
-              <Link href="/users/create" passHref>
+              <NextLink href="/users/create" passHref>
                 <Button
                   as="a"
                   size="sm"
@@ -90,7 +79,7 @@ const User = () => {
                 >
                   Criar novo
                 </Button>
-              </Link>
+              </NextLink>
             </Flex>
             {isLoading ? (
               <Flex justify="center">
@@ -114,7 +103,7 @@ const User = () => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {data.map((user: User) => {
+                    {data.users.map((user: User) => {
                       return (
                         <Tr key={user.id}>
                           <Td px={["4", "4", "6"]}>
@@ -122,7 +111,13 @@ const User = () => {
                           </Td>
                           <Td>
                             <Box>
-                              <Text fontWeight="bold">{user.name}</Text>
+                              <Link
+                                color="purple.500"
+                                textDecoration="none"
+                                onMouseEnter={() => handlePrefetchUser(user.id)}
+                              >
+                                <Text fontWeight="bold">{user.name}</Text>
+                              </Link>
                               <Text fontSize="sm" color="gray.300">
                                 {user.email}
                               </Text>
@@ -150,7 +145,7 @@ const User = () => {
                   </Tbody>
                 </Table>
                 <Pagination
-                  totalCountOfRegisters={200}
+                  totalCountOfRegisters={data.totalCount}
                   currentPage={page}
                   onPageChange={setPage}
                 />
